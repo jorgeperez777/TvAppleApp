@@ -17,4 +17,9 @@ export const playerConfig = {
   progressUpdateInterval: 500,
   /** A partir de este retraso (s) se deja de considerar "en el borde del directo". */
   liveEdgeToleranceSeconds: 12,
+  /**
+   * Salto mínimo hacia delante al pedir directo, para orígenes que no informan
+   * de ventana DVR. Basta con pasarse: AVPlayer recorta al borde real.
+   */
+  liveJumpMinSeconds: 60,
 } as const;

@@ -65,6 +65,9 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
    */
   const liveEdgeRef = useRef(0);
   const lastTickRef = useRef(0);
+  /** Últimos valores que reportó el reproductor, para calcular el salto al directo. */
+  const positionRef = useRef(0);
+  const dvrWindowRef = useRef(0);
 
   // Los controles se ocultan solos mientras reproduce; en pausa o con error se quedan.
   const idleEnabled = !paused && !error;
@@ -93,6 +96,8 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
     retriesRef.current = 0;
     liveEdgeRef.current = 0;
     lastTickRef.current = 0;
+    positionRef.current = 0;
+    dvrWindowRef.current = 0;
     setError(null);
     setBuffering(true);
     setPaused(false);
@@ -132,9 +137,24 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
   }, [poke]);
 
   const goLive = useCallback(() => {
-    if (liveEdgeRef.current > 0) {
-      videoRef.current?.seek(liveEdgeRef.current);
+    // No hace falta acertar el borde, sólo pasarse: AVPlayer recorta el seek al
+    // final del rango buscable. Sumar la ventana DVR a la posición actual está
+    // garantizado por delante de ese final.
+    const target =
+      positionRef.current +
+      Math.max(dvrWindowRef.current, playerConfig.liveJumpMinSeconds);
+    if (Number.isFinite(target) && target > 0) {
+      videoRef.current?.seek(target);
     }
+
+    // Re-anclar el estimador del borde. El salto que se recorta aterriza antes
+    // de lo pedido, y sin reiniciar aquí la estimación se queda por delante de
+    // la realidad: quedaría un retraso fantasma que ya nunca se cierra y que
+    // volver a pulsar el botón no arregla.
+    liveEdgeRef.current = 0;
+    lastTickRef.current = 0;
+    setBehindLive(0);
+
     setPaused(false);
     poke();
   }, [poke]);
@@ -174,6 +194,8 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
 
       const edge = Math.max(liveEdgeRef.current + elapsed, data.currentTime);
       liveEdgeRef.current = edge;
+      positionRef.current = data.currentTime;
+      dvrWindowRef.current = data.seekableDuration;
 
       setDvrWindow(data.seekableDuration);
       setBehindLive(Math.max(0, edge - data.currentTime));

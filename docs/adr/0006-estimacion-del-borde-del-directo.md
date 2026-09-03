@@ -39,8 +39,20 @@ Se comporta bien en los casos que importan:
 - **Salto al directo:** `currentTime` da un salto adelante, el máximo adopta ese
   valor y el retraso vuelve a cero sin arrastrar error.
 
-«Ir al directo» hace `seek()` a ese borde estimado. `playerConfig.liveEdgeToleranceSeconds`
-define a partir de cuántos segundos se deja de considerar que estamos en el borde.
+`playerConfig.liveEdgeToleranceSeconds` define a partir de cuántos segundos se
+deja de considerar que estamos en el borde.
+
+**«Ir al directo» no usa la estimación como destino.** Salta a
+`posición + ventana DVR`, que está garantizado por delante del final del rango
+buscable, y deja que AVPlayer recorte al borde real: para llegar al directo no
+hace falta acertar, basta con pasarse. Acto seguido **reinicia el estimador**,
+que vuelve a anclarse en el siguiente `onProgress`.
+
+Ese reinicio no es cosmético. Medido en el simulador tras una pausa de 200 s
+sobre una ventana DVR de 162 s: el salto aterrizaba en el borde real, pero la
+estimación se quedaba 25,7 s por delante de la realidad, así que la app seguía
+informando de un retraso que ya no existía y que volver a pulsar el botón no
+cerraba. Con el reanclaje, la misma prueba deja el retraso en 0,2 s.
 
 ## Alternativas consideradas
 
@@ -58,6 +70,8 @@ define a partir de cuántos segundos se deja de considerar que estamos en el bor
 
 - **Lo que se muestra es una estimación, no un dato del manifiesto.** El indicador
   de retraso y la barra DVR no deben usarse como medida exacta de latencia.
+- La estimación sólo alimenta lo que se muestra en pantalla; el destino del salto
+  al directo no depende de ella.
 - El estimador supone velocidad de reproducción 1×. Si se añade reproducción
   acelerada, hay que ponderar el avance del reloj por `rate`.
 - El estado vive en refs (`liveEdgeRef`, `lastTickRef`) y se reinicia al cambiar
