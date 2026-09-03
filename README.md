@@ -96,6 +96,10 @@ src/components/                Overlay, botones y tarjetas con foco de tvOS
 
 ## Notas de implementación
 
+Las decisiones con consecuencias difíciles de revertir —y lo que se descartó en
+cada una— están en [`docs/adr/`](docs/adr/). Resumen de las que más se notan al
+leer el código:
+
 - **Sin librería de navegación.** Dos pantallas y un estado en `App.tsx`: menos
   dependencias nativas y menos interferencias con el motor de foco de tvOS.
 - **El botón Menú** sólo llega a JavaScript si se llama a
@@ -111,6 +115,9 @@ src/components/                Overlay, botones y tarjetas con foco de tvOS
 - **Foco.** Los controles se desmontan al ocultarse, así que mientras no están
   no hay nada enfocable y las teclas de dirección sólo sirven para volver a
   mostrarlos.
+- **Velo del overlay.** El degradado es un PNG embebido como data URI, no un
+  asset con `require()`: el `require()` no llega a pintarse en tvOS. Ver
+  [ADR 0009](docs/adr/0009-velo-degradado-como-data-uri.md) antes de tocarlo.
 
 ## Comprobaciones
 
