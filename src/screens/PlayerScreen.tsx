@@ -25,7 +25,12 @@ import {colors, radius, spacing, typography} from '../theme';
 type Props = {
   channels: Channel[];
   initialIndex: number;
-  onExit: () => void;
+  /**
+   * Ausente cuando el reproductor es la raíz de la app (una sola señal): no hay
+   * lista a la que volver, así que el botón Menú se deja al sistema para que
+   * salga a la pantalla de inicio del Apple TV, como espera cualquier app tvOS.
+   */
+  onExit?: () => void;
 };
 
 type PlaybackError = {
@@ -98,11 +103,16 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
 
   useEffect(() => clearRetryTimer, [clearRetryTimer]);
 
-  // El botón Menú del mando sólo llega a JS si se habilita explícitamente.
+  // El botón Menú del mando sólo llega a JS si se habilita explícitamente, y
+  // habilitarlo se lo quita al sistema. Sólo se intercepta si hay una pantalla
+  // anterior; si no, dejarlo pasar es lo que permite salir de la app.
   useEffect(() => {
+    if (!onExit) {
+      return;
+    }
     TVEventControl.enableTVMenuKey();
     return () => TVEventControl.disableTVMenuKey();
-  }, []);
+  }, [onExit]);
 
   const changeChannel = useCallback(
     (delta: number) => {
@@ -137,7 +147,7 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
       }
       switch (event.eventType) {
         case 'menu':
-          onExit();
+          onExit?.();
           break;
         case 'playPause':
           togglePlay();
@@ -281,7 +291,9 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
                 autoFocus
                 onPress={manualRetry}
               />
-              <TVButton glyph="✕" label="Salir" onPress={onExit} />
+              {onExit ? (
+                <TVButton glyph="✕" label="Salir" onPress={onExit} />
+              ) : null}
             </View>
           </View>
         </View>

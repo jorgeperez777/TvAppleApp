@@ -20,6 +20,7 @@ anterior y se marca el viejo como *Reemplazada por ADR NNNN*.
 | [0007](0007-recuperacion-por-remontaje.md) | Recuperar errores remontando el componente de vídeo | Aceptada |
 | [0008](0008-excepcion-ats-acotada-a-medios.md) | Excepción de ATS acotada a medios | Aceptada |
 | [0009](0009-velo-degradado-como-data-uri.md) | Velo degradado embebido como data URI | Aceptada |
+| [0010](0010-reproductor-como-raiz-con-una-senal.md) | El reproductor es la raíz cuando hay una sola señal | Aceptada |
 
 ## Plantilla
 

@@ -32,6 +32,12 @@ vía `initialFocusIndex`.
   profundos. Ninguno de los tres hace falta con dos pantallas, y el coste en
   dependencias nativas y en riesgo de foco es inmediato (ver [ADR 0001](0001-react-native-sobre-fork-tvos.md)).
 
+## Nota posterior
+
+[ADR 0010](0010-reproductor-como-raiz-con-una-senal.md) matiza esta decisión: con
+una sola señal configurada la rejilla no se monta y el reproductor pasa a ser la
+raíz. El mecanismo de navegación no cambia.
+
 ## Consecuencias
 
 - No hay historial ni enlaces profundos. Si la app crece a tres o cuatro pantallas

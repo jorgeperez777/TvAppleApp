@@ -1,8 +1,12 @@
 # TV en directo — reproductor a pantalla completa para Apple TV
 
 App de **tvOS** hecha con **React Native** (`react-native-tvos`) y **`react-native-video`**
-(AVPlayer). Muestra una lista de señales y las reproduce a pantalla completa, con
-controles pensados para el mando de Apple TV.
+(AVPlayer). Reproduce señales HLS en directo a pantalla completa, con controles
+pensados para el mando de Apple TV.
+
+La forma de la app la decide el número de señales configuradas: **con una sola**,
+el reproductor es la raíz y arranca directo; **con dos o más**, aparece antes una
+rejilla para elegir.
 
 ## Qué hace
 
@@ -56,7 +60,7 @@ equipo de firma en *Signing & Capabilities* y ejecuta sobre el dispositivo
 | Cualquier dirección | Muestra los controles |
 | Selección | Activa el botón enfocado |
 | Reproducir/Pausar | Alterna la señal desde cualquier punto |
-| Menú | Vuelve a la lista de canales |
+| Menú | Vuelve a la lista, o sale de la app si no hay lista |
 
 ## Cambiar las señales
 
@@ -78,8 +82,24 @@ Los orígenes **HTTP** (sin TLS) funcionan: `ios/TvLiveApp/Info.plist` activa
 a la carga de medios por AVFoundation. El resto del tráfico de la app sigue
 exigiendo HTTPS.
 
+Añadir una segunda entrada hace aparecer la rejilla de canales sin ningún otro
+cambio; volver a una deja el reproductor como raíz.
+
 Los parámetros de latencia, búfer y reintentos están agrupados en
 [`src/playerConfig.ts`](src/playerConfig.ts).
+
+### Señales de prueba
+
+Comprobadas el 2026-09-03. Útiles para validar la reproducción antes de conectar
+un origen propio.
+
+| Señal | URL |
+| --- | --- |
+| Red Bull TV (directo) | `https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_928.m3u8` |
+| NASA TV (directo) | `https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8` |
+| Akamai Live Test (directo, DVR) | `https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8` |
+| Unified Streaming (directo) | `https://demo.unified-streaming.com/k8s/live/stable/live.isml/.m3u8` |
+| Apple BipBop (VOD) | `https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8` |
 
 ## Estructura
 
@@ -103,8 +123,10 @@ leer el código:
 - **Sin librería de navegación.** Dos pantallas y un estado en `App.tsx`: menos
   dependencias nativas y menos interferencias con el motor de foco de tvOS.
 - **El botón Menú** sólo llega a JavaScript si se llama a
-  `TVEventControl.enableTVMenuKey()`; `PlayerScreen` lo activa al entrar y lo
-  desactiva al salir.
+  `TVEventControl.enableTVMenuKey()`, y llamarlo se lo quita al sistema. El
+  reproductor sólo lo intercepta cuando hay una lista detrás; si es la raíz, lo
+  deja pasar para que Menú salga a la pantalla de inicio del Apple TV. Ver
+  [ADR 0010](docs/adr/0010-reproductor-como-raiz-con-una-senal.md).
 - **Estimación del borde del directo.** AVPlayer expone la *longitud* de la
   ventana DVR (`seekableDuration`), no su instante final. `PlayerScreen` sigue el
   borde con un estimador que nunca queda por detrás del tiempo reproducido y

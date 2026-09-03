@@ -7,11 +7,20 @@ import {colors} from './src/theme';
 import type {Route} from './src/types';
 
 /**
+ * Con una sola señal la lista sobra: sería un menú de un elemento delante de la
+ * única cosa que la app hace. En ese caso el reproductor es la raíz y arranca
+ * directamente. Al añadir una segunda señal, la lista vuelve sola.
+ */
+const HAS_CHANNEL_LIST = CHANNELS.length > 1;
+
+/**
  * Navegación deliberadamente mínima: dos pantallas y un estado. Evita añadir
  * dependencias nativas de navegación, que en tvOS complican el motor de foco.
  */
 export default function App() {
-  const [route, setRoute] = useState<Route>({name: 'channels'});
+  const [route, setRoute] = useState<Route>(
+    HAS_CHANNEL_LIST ? {name: 'channels'} : {name: 'player', index: 0},
+  );
   const [lastWatched, setLastWatched] = useState(0);
 
   const openPlayer = useCallback((index: number) => {
@@ -31,7 +40,9 @@ export default function App() {
           key={`player-${route.index}`}
           channels={CHANNELS}
           initialIndex={route.index}
-          onExit={closePlayer}
+          // Sin lista detrás no se pasa onExit: el botón Menú queda para el
+          // sistema, que es lo que saca al usuario a la pantalla de inicio.
+          onExit={HAS_CHANNEL_LIST ? closePlayer : undefined}
         />
       ) : (
         <ChannelsScreen

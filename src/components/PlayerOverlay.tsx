@@ -22,7 +22,8 @@ type Props = {
   onGoLive: () => void;
   onPrev: () => void;
   onNext: () => void;
-  onExit: () => void;
+  /** Ausente cuando el reproductor es la raíz: no hay a dónde salir. */
+  onExit?: () => void;
   onActivity: () => void;
 };
 
@@ -130,11 +131,15 @@ export function PlayerOverlay({
 
           <View style={styles.spacer} />
 
-          <TVButton glyph="✕" label="Salir" onPress={onExit} onActivity={onActivity} />
+          {onExit ? (
+            <TVButton glyph="✕" label="Salir" onPress={onExit} onActivity={onActivity} />
+          ) : null}
         </View>
 
         <Text style={styles.hint}>
-          Reproducir/Pausar en el mando alterna la señal · Menú vuelve a la lista
+          {onExit
+            ? 'Reproducir/Pausar en el mando alterna la señal · Menú vuelve a la lista'
+            : 'Reproducir/Pausar en el mando alterna la señal · Menú sale de la app'}
         </Text>
       </View>
     </Animated.View>
