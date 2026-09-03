@@ -22,13 +22,27 @@ controles pensados para el mando de Apple TV.
 - macOS con **Xcode** (SDK de tvOS) y un simulador de Apple TV instalado.
 - **Node ≥ 20** y **CocoaPods**.
 
+Se usa la instalación de CocoaPods del sistema. Si prefieres fijar la versión
+con bundler, el `Gemfile` está incluido: `bundle install` y luego
+`cd ios && bundle exec pod install`.
+
 ## Puesta en marcha
 
 ```sh
 npm install
 npm run pods        # cd ios && pod install
-npm start           # Metro, en otra terminal
-npm run tv          # compila y abre el simulador de Apple TV
+npm run tv          # arranca Metro, compila y abre el simulador de Apple TV
+```
+
+`npm run tv` levanta Metro por su cuenta si no está ya corriendo. Para verlo en
+su propia terminal, arráncalo antes con `npm start`.
+
+Si el puerto 8081 está ocupado por otro proyecto, hay que pasar el mismo puerto
+a las dos partes:
+
+```sh
+npm start -- --port 8082
+npm run tv -- --port 8082
 ```
 
 Para un Apple TV físico: abre `ios/TvLiveApp.xcworkspace` en Xcode, elige tu

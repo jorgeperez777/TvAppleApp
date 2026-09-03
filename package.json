@@ -7,7 +7,7 @@
     "tv": "react-native run-ios --simulator=\"Apple TV 4K (3rd generation)\"",
     "tv:device": "react-native run-ios --device",
     "androidtv": "react-native run-android",
-    "pods": "cd ios && bundle exec pod install",
+    "pods": "cd ios && pod install",
     "lint": "eslint .",
     "tsc": "tsc --noEmit",
     "test": "jest"
