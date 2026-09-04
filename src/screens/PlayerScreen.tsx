@@ -9,7 +9,6 @@ import {
   type HWEvent,
 } from 'react-native';
 import Video, {
-  type OnBandwidthUpdateData,
   type OnBufferData,
   type OnProgressData,
   type OnVideoErrorData,
@@ -19,7 +18,7 @@ import {PlayerOverlay} from '../components/PlayerOverlay';
 import {TVButton} from '../components/TVButton';
 import {useIdleTimer} from '../hooks/useIdleTimer';
 import {playerConfig} from '../playerConfig';
-import type {Channel, PlaybackStats} from '../types';
+import type {Channel} from '../types';
 import {colors, radius, spacing, typography} from '../theme';
 
 type Props = {
@@ -39,8 +38,6 @@ type PlaybackError = {
   willRetry: boolean;
 };
 
-const NO_STATS: PlaybackStats = {bitrate: 0, width: 0, height: 0};
-
 export function PlayerScreen({channels, initialIndex, onExit}: Props) {
   const [index, setIndex] = useState(initialIndex);
   const channel = channels[index];
@@ -51,7 +48,6 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
   const [error, setError] = useState<PlaybackError | null>(null);
   /** Cambiar este token remonta el <Video>: es la forma fiable de rearrancar HLS. */
   const [reloadToken, setReloadToken] = useState(0);
-  const [stats, setStats] = useState<PlaybackStats>(NO_STATS);
   const [dvrWindow, setDvrWindow] = useState(0);
   const [behindLive, setBehindLive] = useState(0);
 
@@ -101,7 +97,6 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
     setError(null);
     setBuffering(true);
     setPaused(false);
-    setStats(NO_STATS);
     setDvrWindow(0);
     setBehindLive(0);
   }, [clearRetryTimer]);
@@ -207,14 +202,6 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
     setBuffering(data.isBuffering);
   }, []);
 
-  const handleBandwidth = useCallback((data: OnBandwidthUpdateData) => {
-    setStats({
-      bitrate: data.bitrate ?? 0,
-      width: Math.round(data.width ?? 0),
-      height: Math.round(data.height ?? 0),
-    });
-  }, []);
-
   const handleReady = useCallback(() => {
     setBuffering(false);
     setError(null);
@@ -281,11 +268,9 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
         preventsDisplaySleepDuringVideoPlayback
         progressUpdateInterval={playerConfig.progressUpdateInterval}
         preferredForwardBufferDuration={playerConfig.preferredForwardBufferDuration}
-        reportBandwidth
         onReadyForDisplay={handleReady}
         onBuffer={handleBuffer}
         onProgress={handleProgress}
-        onBandwidthUpdate={handleBandwidth}
         onError={handleError}
       />
 
@@ -329,7 +314,6 @@ export function PlayerScreen({channels, initialIndex, onExit}: Props) {
           atLiveEdge={atLiveEdge}
           dvrWindow={dvrWindow}
           position={Math.max(0, dvrWindow - behindLive)}
-          stats={stats}
           hasSiblings={channels.length > 1}
           onTogglePlay={togglePlay}
           onGoLive={goLive}

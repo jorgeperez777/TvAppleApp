@@ -1,8 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import {Animated, StyleSheet, Text, View} from 'react-native';
-import type {Channel, PlaybackStats} from '../types';
+import type {Channel} from '../types';
 import {colors, overscan, radius, spacing, typography} from '../theme';
-import {describeStats, formatClock} from '../format';
+import {formatClock} from '../format';
 import {Fade} from './Fade';
 import {LiveBadge} from './LiveBadge';
 import {TVButton} from './TVButton';
@@ -16,7 +16,6 @@ type Props = {
   /** Longitud de la ventana DVR en segundos, según el manifiesto. */
   dvrWindow: number;
   position: number;
-  stats: PlaybackStats;
   hasSiblings: boolean;
   onTogglePlay: () => void;
   onGoLive: () => void;
@@ -34,7 +33,6 @@ export function PlayerOverlay({
   atLiveEdge,
   dvrWindow,
   position,
-  stats,
   hasSiblings,
   onTogglePlay,
   onGoLive,
@@ -66,9 +64,6 @@ export function PlayerOverlay({
           <Text numberOfLines={1} style={styles.channelName}>
             {channel.name}
           </Text>
-          <Text numberOfLines={1} style={styles.channelDescription}>
-            {channel.description}
-          </Text>
         </View>
         <View style={styles.topRight}>
           <LiveBadge
@@ -81,25 +76,15 @@ export function PlayerOverlay({
                 : `-${formatClock(behindLiveSeconds)} DEL DIRECTO`
             }
           />
-          <Text style={styles.stats}>{describeStats(stats)}</Text>
         </View>
       </View>
 
       <View style={styles.bottom}>
-        {/* Barra DVR: la posición dentro de la ventana que el origen mantiene disponible. */}
-        <View style={styles.timeline}>
-          <View style={styles.track}>
-            <View style={[styles.trackFill, {flex: progress}]} />
-            <View style={{flex: 1 - progress}} />
-          </View>
-          <View style={styles.timelineLabels}>
-            <Text style={styles.timelineLabel}>
-              {dvrWindow > 0 ? `Ventana DVR ${formatClock(dvrWindow)}` : 'Sin DVR'}
-            </Text>
-            <Text style={styles.timelineLabel}>
-              {atLiveEdge ? 'Borde del directo' : `Retraso ${formatClock(behindLiveSeconds)}`}
-            </Text>
-          </View>
+        {/* Barra DVR: al quedarse atrás se retrae, lo que da la lectura visual
+            del retraso que la insignia da en texto. */}
+        <View style={styles.track}>
+          <View style={[styles.trackFill, {flex: progress}]} />
+          <View style={{flex: 1 - progress}} />
         </View>
 
         <View style={styles.controls}>
@@ -136,11 +121,6 @@ export function PlayerOverlay({
           ) : null}
         </View>
 
-        <Text style={styles.hint}>
-          {onExit
-            ? 'Reproducir/Pausar en el mando alterna la señal · Menú vuelve a la lista'
-            : 'Reproducir/Pausar en el mando alterna la señal · Menú sale de la app'}
-        </Text>
       </View>
     </Animated.View>
   );
@@ -160,8 +140,6 @@ const styles = StyleSheet.create({
   topLeft: {flex: 1, gap: spacing.xs},
   topRight: {alignItems: 'flex-end', gap: spacing.sm},
   channelName: {...typography.display, fontSize: 48, color: colors.text},
-  channelDescription: {...typography.body, color: colors.textMuted},
-  stats: {...typography.body, fontSize: 18, color: colors.textMuted},
   bottom: {
     position: 'absolute',
     bottom: overscan.vertical,
@@ -169,7 +147,6 @@ const styles = StyleSheet.create({
     right: overscan.horizontal,
     gap: spacing.lg,
   },
-  timeline: {gap: spacing.sm},
   track: {
     height: 6,
     borderRadius: radius.pill,
@@ -178,9 +155,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   trackFill: {backgroundColor: colors.live},
-  timelineLabels: {flexDirection: 'row', justifyContent: 'space-between'},
-  timelineLabel: {...typography.body, fontSize: 18, color: colors.textMuted},
   controls: {flexDirection: 'row', alignItems: 'center', gap: spacing.md},
   spacer: {flex: 1},
-  hint: {...typography.body, fontSize: 18, color: 'rgba(255,255,255,0.45)'},
 });

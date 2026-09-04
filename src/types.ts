@@ -12,11 +12,3 @@ export type Channel = {
 export type Route =
   | {name: 'channels'}
   | {name: 'player'; index: number};
-
-/** Calidad efectiva que reporta el reproductor durante la reproducción. */
-export type PlaybackStats = {
-  /** Bits por segundo del variante HLS en curso. */
-  bitrate: number;
-  width: number;
-  height: number;
-};

@@ -14,8 +14,9 @@ rejilla para elegir.
   fondo negro y sin barra de estado.
 - **Controles que se ocultan solos.** Aparecen con cualquier tecla del mando y se
   esconden tras 4 s de inactividad; en pausa o con error se quedan fijos.
-- **Estado real del directo.** Insignia *EN DIRECTO*, retraso respecto al borde,
-  ventana DVR, resolución y bitrate en curso.
+- **Estado real del directo.** Insignia *EN DIRECTO*, que pasa a indicar el
+  retraso al quedarse atrás, y una barra que muestra la posición dentro de la
+  ventana DVR.
 - **Botón «Ir al directo»** para saltar al borde de la emisión tras una pausa.
 - **Reconexión automática** con espera creciente (4 intentos) y reintento manual
   si se agotan.

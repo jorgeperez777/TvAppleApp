@@ -1,4 +1,4 @@
-import {describeStats, formatClock} from '../src/format';
+import {formatClock} from '../src/format';
 
 describe('formatClock', () => {
   it('formatea por debajo de un minuto con minutos a cero', () => {
@@ -20,21 +20,5 @@ describe('formatClock', () => {
   it('no rompe con valores no finitos', () => {
     expect(formatClock(Number.NaN)).toBe('0:00');
     expect(formatClock(Number.POSITIVE_INFINITY)).toBe('0:00');
-  });
-});
-
-describe('describeStats', () => {
-  it('combina resolución y bitrate', () => {
-    expect(describeStats({bitrate: 3_500_000, width: 1920, height: 1080})).toBe(
-      '1920×1080  ·  3.5 Mbps',
-    );
-  });
-
-  it('omite lo que aún no se ha reportado', () => {
-    expect(describeStats({bitrate: 2_000_000, width: 0, height: 0})).toBe('2.0 Mbps');
-  });
-
-  it('avisa mientras no hay datos', () => {
-    expect(describeStats({bitrate: 0, width: 0, height: 0})).toBe('Midiendo calidad…');
   });
 });
