@@ -141,6 +141,15 @@ leer el código:
   asset con `require()`: el `require()` no llega a pintarse en tvOS. Ver
   [ADR 0009](docs/adr/0009-velo-degradado-como-data-uri.md) antes de tocarlo.
 
+## Assets de tvOS
+
+El icono en capas, las imágenes de Top Shelf y el logo de la pantalla de
+lanzamiento se generan desde `assets/splash-screen-fhd.jpeg` con
+[`scripts/generate-tv-assets.py`](scripts/generate-tv-assets.py). La cabecera del
+script trae cómo ejecutarlo y cómo validar el catálogo con `actool` sin compilar
+la app. El detalle de tamaños y limitaciones está en
+[ADR 0011](docs/adr/0011-assets-tvos-generados-desde-un-solo-logo.md).
+
 ## Comprobaciones
 
 ```sh

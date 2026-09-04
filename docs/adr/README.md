@@ -21,6 +21,7 @@ anterior y se marca el viejo como *Reemplazada por ADR NNNN*.
 | [0008](0008-excepcion-ats-acotada-a-medios.md) | Excepción de ATS acotada a medios | Aceptada |
 | [0009](0009-velo-degradado-como-data-uri.md) | Velo degradado embebido como data URI | Aceptada |
 | [0010](0010-reproductor-como-raiz-con-una-senal.md) | El reproductor es la raíz cuando hay una sola señal | Aceptada |
+| [0011](0011-assets-tvos-generados-desde-un-solo-logo.md) | Los assets de tvOS se generan por script desde un solo logo | Aceptada |
 
 ## Plantilla
 
