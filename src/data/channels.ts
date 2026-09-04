@@ -1,4 +1,4 @@
-import type {Channel} from '../types';
+import type { Channel } from '../types';
 
 /**
  * Señales de la app. Sustituye la URL por la tuya: cualquier HLS (.m3u8) en
@@ -17,10 +17,11 @@ import type {Channel} from '../types';
  */
 export const CHANNELS: Channel[] = [
   {
-    id: 'redbull',
-    name: 'Red Bull TV',
-    description: 'Deportes de acción y música, emisión continua 24/7.',
-    url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_928.m3u8',
+    id: 'laRevista',
+    name: 'La Revista Peninsular',
+    description:
+      'Mantente informado con las noticias más relevantes de México. Cobertura local y nacional, transmisiones en vivo y reportajes al alcance de tu dispositivo.',
+    url: 'https://player.tvstream.mx/livestream/revista/livehd/playlist.m3u8',
     isLive: true,
   },
 ];
