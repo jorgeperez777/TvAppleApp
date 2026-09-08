@@ -54,6 +54,10 @@ def logo_with_alpha():
                 )
     return out
 
+def solid(w, h):
+    """Lienzo blanco opaco, sin nada encima."""
+    return Image.new('RGBA', (w, h), WHITE + (255,))
+
 def compose(logo, w, h, margin, transparent):
     """Logo centrado sobre un lienzo de w x h, dejando `margin` de margen relativo."""
     scale = min(w * (1 - 2 * margin) / logo.width, h * (1 - 2 * margin) / logo.height)
@@ -80,18 +84,22 @@ def imageset(path, entries):
     write_json(os.path.join(path, 'Contents.json'), {'images': images, 'info': INFO})
 
 def imagestack(path, size, scales, logo, margin):
-    """Icono en capas: fondo blanco opaco detrás, logo flotando delante."""
+    """Icono en capas: blanco liso detrás, logo flotando delante."""
     os.makedirs(path, exist_ok=True)
     w, h = size
     layers = []
-    for name, transparent in (('Front', True), ('Back', False)):
+    # El logo va SÓLO en la capa delantera. Si también estuviera en el fondo, al
+    # enfocar el icono el parallax separaría las capas y se vería duplicado.
+    for name, is_front in (('Front', True), ('Back', False)):
         layer = os.path.join(path, f'{name}.imagestacklayer')
         os.makedirs(layer, exist_ok=True)
         write_json(os.path.join(layer, 'Contents.json'), {'info': INFO})
         entries = []
         for scale in scales:
             k = int(scale[0])
-            entries.append((scale, compose(logo, w * k, h * k, margin, transparent)))
+            img = (compose(logo, w * k, h * k, margin, True) if is_front
+                   else solid(w * k, h * k))
+            entries.append((scale, img))
         imageset(os.path.join(layer, 'Content.imageset'), entries)
         layers.append({'filename': f'{name}.imagestacklayer'})
     write_json(os.path.join(path, 'Contents.json'), {'layers': layers, 'info': INFO})

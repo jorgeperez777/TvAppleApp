@@ -36,9 +36,11 @@ splash, que es la fuente de mayor resolución. Tres decisiones dentro del script
   bordes, se calcula `alfa = 255 − min(R,G,B)` y se recupera el color original.
   La capa resultante, compuesta sobre el blanco de la capa de fondo, reproduce el
   original exactamente y conserva el suavizado.
-- **Iconos de dos capas:** blanco opaco detrás, logo con alfa delante. Es el
+- **Iconos de dos capas:** blanco liso detrás, logo con alfa delante. Es el
   mínimo que admite tvOS y el que corresponde a una marca que ya se presenta
-  sobre blanco.
+  sobre blanco. **El logo va sólo en la capa delantera:** si también estuviera en
+  el fondo, al enfocar el icono el parallax separaría las capas y se vería el
+  logotipo duplicado y desplazado. La primera versión tenía justamente ese fallo.
 - **Margen del 10 % en iconos y del 16 % en los banners.** El parallax desplaza
   las capas dentro del marco; el contenido pegado al borde se recorta al
   enfocarse.
